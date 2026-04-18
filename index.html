@@ -429,6 +429,13 @@ footer{background:var(--dark);border-top:1px solid var(--bdk);padding:2.5rem 5vw
 /* WA FLOAT */
 .wa-float{display:none;}
 
+/* HERO — vídeo só no desktop, imagem só no mobile */
+.hero-img-mobile { display: none; }
+@media(max-width:768px) {
+  .hero-video-desktop { display: none; }
+  .hero-img-mobile { display: block; }
+}
+
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
 .reveal{opacity:0;transform:translateY(16px);transition:opacity .65s ease,transform .65s ease;}
@@ -512,9 +519,10 @@ footer{background:var(--dark);border-top:1px solid var(--bdk);padding:2.5rem 5vw
 
 <!-- HERO com vídeo -->
 <section id="hero">
-  <video class="hero-video" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="VIN05692-Editar.jpg">
+  <video class="hero-video hero-video-desktop" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="VIN05692-Editar.jpg">
     <source src="video-cjl-hero.mp4" type="video/mp4; codecs=avc1">
   </video>
+  <img class="hero-video hero-img-mobile" src="VIN05692-Editar.jpg" alt="Dr. Jonas Lima">
   <div class="hero-overlay"></div>
   <div class="hero-deco">
     <div class="hero-deco-ring hdr1"></div>
@@ -877,23 +885,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// Force autoplay no iOS
-const heroVideo = document.querySelector('.hero-video');
-if (heroVideo) {
-  heroVideo.muted = true;
-  heroVideo.setAttribute('muted', '');
-  heroVideo.setAttribute('playsinline', '');
-  heroVideo.setAttribute('webkit-playsinline', '');
-  const playPromise = heroVideo.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(() => {
-      // Se falhar, tenta novamente ao primeiro toque
-      document.addEventListener('touchstart', () => {
-        heroVideo.play();
-      }, { once: true });
-    });
-  }
-}
 
 // Parallax 3D nos tópicos — mobile e desktop
 const creds = document.querySelectorAll('.cred-3d');
@@ -913,6 +904,23 @@ window.addEventListener('scroll', () => {
     el.style.boxShadow = `0 ${8 - dist * 4}px ${20 + Math.abs(dist) * 10}px rgba(139,74,32,${0.07 + Math.abs(dist) * 0.05})`;
   });
 }, { passive: true });
+
+// Force autoplay no iOS
+const heroVideo = document.querySelector('.hero-video-desktop');
+if (heroVideo) {
+  heroVideo.muted = true;
+  heroVideo.setAttribute('muted', '');
+  heroVideo.setAttribute('playsinline', '');
+  heroVideo.setAttribute('webkit-playsinline', '');
+  const playPromise = heroVideo.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      document.addEventListener('touchstart', () => {
+        heroVideo.play();
+      }, { once: true });
+    });
+  }
+}
 
 // Google Ads — Conversão WhatsApp Home Principal
 function gtag_report_conversion(url) {
